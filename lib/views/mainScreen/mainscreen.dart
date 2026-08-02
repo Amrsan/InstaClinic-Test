@@ -16,8 +16,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     HomeView(),
-    ExtraServicesView(),
-    ProfileView(),       // Replace with your ProfileView
+    const ExtraServicesView(),
+    const ProfileView(), // Replace with your ProfileView
   ];
 
   void _onItemTapped(int index) {
@@ -36,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/home1.png',
+              'assets/icons/home@2x.png',
               width: 28,
               height: 28,
             ),
@@ -52,14 +52,14 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/profile.png',
+              'assets/icons/profile@2x.png',
               width: 28,
               height: 28,
             ),
             label: 'Profile',
           ),
         ],
-        selectedItemColor: Color(0xFF0D9298), // Use your primary color
+        selectedItemColor: const Color(0xFF0D9298), // Use your primary color
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,

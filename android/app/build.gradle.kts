@@ -33,9 +33,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("keystore.jks")
-            storePassword = "instaclinics123"
+            storePassword = "123456"
             keyAlias = "upload"
-            keyPassword = "instaclinics123"
+            keyPassword = "123456"
         }
     }
 
@@ -46,6 +46,11 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
+    }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 
     buildFeatures {

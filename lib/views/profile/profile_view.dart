@@ -119,7 +119,7 @@ class ProfileView extends GetView<ProfileController> {
                           const SizedBox(height: 8),
                           Obx(() => TextButton.icon(
                             onPressed: () {
-                              if (controller.isLogin) {
+                              if (controller.isLogin.value) {
                                 controller.signOut();
                                 Get.offAllNamed('/login');
                               } else {
@@ -127,12 +127,12 @@ class ProfileView extends GetView<ProfileController> {
                               }
                             },
                             icon: Icon(
-                              controller.isLogin? Icons.logout : Icons.login,
+                              controller.isLogin.value? Icons.logout : Icons.login,
                               color: Colors.white,
                               size: 20,
                             ),
                             label: Text(
-                              controller.isLogin ? 'logout'.tr : 'login'.tr,
+                              controller.isLogin.value ? 'logout'.tr : 'login'.tr,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -165,18 +165,19 @@ class ProfileView extends GetView<ProfileController> {
                         fontWeight: FontWeight.w600,
                       ),
                     )),
-                    controller.isLogin?
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Color(0xFF55B7B6)),
-                      onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EditProfileDialog(controller: controller);
-                              },
-                            );
-                      },
-                    ):SizedBox(),
+                    Obx(() => controller.isLogin.value
+                        ? IconButton(
+                            icon: const Icon(Icons.edit, color: Color(0xFF55B7B6)),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EditProfileDialog(controller: controller);
+                                },
+                              );
+                            },
+                          )
+                        : const SizedBox()),
                   ],
                 ),
 
@@ -295,17 +296,18 @@ class ProfileView extends GetView<ProfileController> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    controller.isLogin?
-                    IconButton(
-                      onPressed: () => Get.toNamed('/address'),
-                      icon: const Icon(Icons.add, color: Color(0xFF55B7B6)),
-                      style: IconButton.styleFrom(
-                        backgroundColor: const Color(0xFF55B7B6).withOpacity(0.1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ):SizedBox(),
+                    Obx(() => controller.isLogin.value
+                        ? IconButton(
+                            onPressed: () => Get.toNamed('/address'),
+                            icon: const Icon(Icons.add, color: Color(0xFF55B7B6)),
+                            style: IconButton.styleFrom(
+                              backgroundColor: const Color(0xFF55B7B6).withOpacity(0.1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          )
+                        : const SizedBox()),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -480,37 +482,42 @@ class ProfileView extends GetView<ProfileController> {
                 const SizedBox(height: 24),
 
                 // Account Deletion Section (per App Store Guideline 5.1.1(v))
-                if (controller.isLogin) ...[
-                  const Divider(),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        final authController = Get.find<AuthController>();
-                        authController.deleteAccount();
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 16,
-                      ),
-                      label: Text(
-                        'delete_account'.tr,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ),
-                ],
+                Obx(() => controller.isLogin.value
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Divider(),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                final authController = Get.find<AuthController>();
+                                authController.deleteAccount();
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              label: Text(
+                                'delete_account'.tr,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox()),
 
                 const SizedBox(height: 24),
               ],
@@ -657,21 +664,22 @@ class ProfileView extends GetView<ProfileController> {
               ),
               Row(
                 children: [
-                  !controller.isLogin?
-                  IconButton(
-                    icon: const Icon(Icons.edit, size: 20, color: Color(0xFF55B7B6)),
-                    onPressed: () {
-                      Get.toNamed('/address', arguments: address);
-                    },
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    style: IconButton.styleFrom(
-                      backgroundColor: const Color(0xFF55B7B6).withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ):const SizedBox(),
+                  Obx(() => controller.isLogin.value
+                      ? IconButton(
+                          icon: const Icon(Icons.edit, size: 20, color: Color(0xFF55B7B6)),
+                          onPressed: () {
+                            Get.toNamed('/address', arguments: address);
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          style: IconButton.styleFrom(
+                            backgroundColor: const Color(0xFF55B7B6).withOpacity(0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        )
+                      : const SizedBox()),
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.delete, size: 20, color: Colors.red),

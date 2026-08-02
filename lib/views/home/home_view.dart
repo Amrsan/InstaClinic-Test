@@ -10,6 +10,7 @@ import '../widgets/clinic_card.dart';
 import '../widgets/emergency_card.dart';
 import '../widgets/extra_service_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 class HomeView extends StatelessWidget {
   HomeView({super.key});
 
@@ -21,8 +22,8 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize ProfileController if not already initialized
     try {
-      if(profileController==null)
-      profileController = Get.find<ProfileController>();
+      if (profileController == null)
+        profileController = Get.find<ProfileController>();
     } catch (e) {
       profileController = Get.put(ProfileController());
     }
@@ -52,45 +53,48 @@ class HomeView extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                if (profileController.isLoggedIn ) {
+                                if (profileController.isLoggedIn) {
                                   Get.toNamed('/profile');
                                 } else {
                                   Get.toNamed('/login');
                                 }
                               },
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Obx((){
-                                      final isLoggedIn = profileController.isLoggedIn;
-                                      final gender = profileController.gender.value;
-                                      return ClipRRect(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
                                         borderRadius: BorderRadius.circular(12),
-                                        child: Image.asset(
-                                          isLoggedIn && gender=='Female'?
-                                          "assets/images/female.jpeg"
-                                              :
-                                          'assets/images/male.jpeg'
-                                          ,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      );
-                                    })
-                                  ),
+                                      ),
+                                      child: Obx(() {
+                                        final isLoggedIn =
+                                            profileController.isLoggedIn;
+                                        final gender =
+                                            profileController.gender.value;
+                                        return ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          child: Image.asset(
+                                            isLoggedIn && gender == 'Female'
+                                                ? "assets/images/female.jpeg"
+                                                : 'assets/images/male.jpeg',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        );
+                                      })),
                                   const SizedBox(width: 12),
                                   Obx(() {
-                                    final isLoggedIn = profileController.isLoggedIn;
-                                    final firstName = profileController.firstName.value;
+                                    final isLoggedIn =
+                                        profileController.isLoggedIn;
+                                    final firstName =
+                                        profileController.firstName.value;
                                     return Text(
                                       isLoggedIn && firstName.isNotEmpty
-                                          ? "${'Hello'.tr} ${firstName??''} "
+                                          ? "${'Hello'.tr} ${firstName ?? ''} "
                                           : 'Hello'.tr,
                                       style: const TextStyle(
                                         fontSize: 20,
@@ -119,29 +123,38 @@ class HomeView extends StatelessWidget {
                     FutureBuilder<List<Service>>(
                       future: servicesController.fetchPrimaryServices(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
-                          return Center(child: Text('error'.trParams({'error': snapshot.error.toString()})));
+                          return Center(
+                              child: Text('error'.trParams(
+                                  {'error': snapshot.error.toString()})));
                         }
                         final services = snapshot.data ?? [];
-                        final emergency = services.firstWhereOrNull((s) => s.name.toLowerCase().contains('emergency'));
-                        final dialysis = services.firstWhereOrNull((s) => s.name.toLowerCase().contains('dialysis'));
-                        final nursing = services.firstWhereOrNull((s) => s.name.toLowerCase().contains('nursing'));
+                        final emergency = services.firstWhereOrNull(
+                            (s) => s.name.toLowerCase().contains('emergency'));
+                        final dialysis = services.firstWhereOrNull(
+                            (s) => s.name.toLowerCase().contains('dialysis'));
+                        final nursing = services.firstWhereOrNull(
+                            (s) => s.name.toLowerCase().contains('nursing'));
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (emergency != null)
                               EmergencyCard(
                                 title: emergency.name,
-                                icon: emergency.imageUrl ?? 'assets/icons/emergency.svg',
+                                icon: emergency.imageUrl ??
+                                    'assets/icons/emergency.svg',
                                 onTap: () {
-                                  Get.to(() => EmeBookingConfirmationView(), arguments: {
-                                    'clinic': emergency,
-                                    'selectedDate': DateTime.now(),
-                                    'selectedTimeSlot': 'Emergency Booking',
-                                  });
+                                  Get.to(() => EmeBookingConfirmationView(),
+                                      arguments: {
+                                        'clinic': emergency,
+                                        'selectedDate': DateTime.now(),
+                                        'selectedTimeSlot': 'Emergency Booking',
+                                      });
                                 },
                               ),
                             const SizedBox(height: 16),
@@ -151,12 +164,13 @@ class HomeView extends StatelessWidget {
                                   if (dialysis != null)
                                     Expanded(
                                       child: ClinicCard(
-                                        titleBackgroundColor:Color(0xfff5ab0b),
-
+                                        titleBackgroundColor: Color(0xfff5ab0b),
                                         title: dialysis.name,
-                                        icon: dialysis.imageUrl ?? 'assets/icons/dialysis.svg',
+                                        icon: dialysis.imageUrl ??
+                                            'assets/icons/dialysis.svg',
                                         onTap: () {
-                                          Get.toNamed('/dialysis-booking', arguments: dialysis);
+                                          Get.toNamed('/dialysis-booking',
+                                              arguments: dialysis);
                                         },
                                       ),
                                     ),
@@ -167,9 +181,12 @@ class HomeView extends StatelessWidget {
                                       child: ClinicCard(
                                         title: nursing.name,
                                         titleBackgroundColor: Color(0XFFF45C07),
-                                        icon: nursing.imageUrl ?? 'assets/icons/nursing.svg',
+                                        icon: nursing.imageUrl ??
+                                            'assets/icons/nursing.svg',
                                         onTap: () {
-                                          Get.to(() => const NursingBookingView(), arguments: nursing);
+                                          Get.to(
+                                              () => const NursingBookingView(),
+                                              arguments: nursing);
                                         },
                                       ),
                                     ),
@@ -185,11 +202,15 @@ class HomeView extends StatelessWidget {
                     FutureBuilder<List<Service>>(
                       future: servicesController.fetchClinics(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
-                          return Center(child: Text('error'.trParams({'error': snapshot.error.toString()})));
+                          return Center(
+                              child: Text('error'.trParams(
+                                  {'error': snapshot.error.toString()})));
                         }
                         final clinics = snapshot.data ?? [];
                         if (clinics.isEmpty) return const SizedBox();
@@ -197,16 +218,19 @@ class HomeView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 'Clinics'.tr,
-                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                             GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 childAspectRatio: 4 / 5,
                                 crossAxisSpacing: 12,
@@ -217,7 +241,8 @@ class HomeView extends StatelessWidget {
                                 final clinic = clinics[index];
                                 return ClinicCard(
                                   title: clinic.name,
-                                  icon: clinic.imageUrl ?? 'assets/icons/abdominal.svg',
+                                  icon: clinic.imageUrl ??
+                                      'assets/icons/abdominal.svg',
                                   onTap: () {
                                     Get.toNamed('/booking', arguments: clinic);
                                   },
@@ -311,7 +336,7 @@ class HomeView extends StatelessWidget {
         // If SVG fails, try PNG
         return Image.asset(
           icon,
-         // color: color,
+          // color: color,
           fit: BoxFit.cover,
         );
       } catch (e) {
@@ -367,7 +392,9 @@ class HomeView extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('error'.trParams({'error': snapshot.error.toString()})));
+                    return Center(
+                        child: Text('error'
+                            .trParams({'error': snapshot.error.toString()})));
                   }
 
                   final primaryServices = snapshot.data ?? [];
@@ -377,7 +404,8 @@ class HomeView extends StatelessWidget {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 1,
                       crossAxisSpacing: 12,
@@ -392,16 +420,19 @@ class HomeView extends StatelessWidget {
                         onTap: () {
                           Navigator.pop(context);
                           if (service.name == 'Dialysis') {
-                            Get.toNamed('/dialysis-booking', arguments: service);
-                          } else if (service.name == 'Emergency' || service.name == 'Intoxication') {
-                            Get.to(() => EmeBookingConfirmationView(), arguments:
-                             {
-                              'clinic': service,
-                              'selectedDate': DateTime.now(),
-                              'selectedTimeSlot': 'Emergency Booking',
-                             });
+                            Get.toNamed('/dialysis-booking',
+                                arguments: service);
+                          } else if (service.name == 'Emergency' ||
+                              service.name == 'Intoxication') {
+                            Get.to(() => EmeBookingConfirmationView(),
+                                arguments: {
+                                  'clinic': service,
+                                  'selectedDate': DateTime.now(),
+                                  'selectedTimeSlot': 'Emergency Booking',
+                                });
                           } else if (service.name == 'Home nursing') {
-                            Get.to(() => const NursingBookingView(), arguments: service);
+                            Get.to(() => const NursingBookingView(),
+                                arguments: service);
                           }
                         },
                       );
@@ -458,7 +489,9 @@ class HomeView extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('error'.trParams({'error': snapshot.error.toString()})));
+                    return Center(
+                        child: Text('error'
+                            .trParams({'error': snapshot.error.toString()})));
                   }
 
                   final clinics = snapshot.data ?? [];
@@ -468,7 +501,8 @@ class HomeView extends StatelessWidget {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 3 / 4,
                       crossAxisSpacing: 12,
@@ -568,8 +602,8 @@ class HomeView extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           content: Text(
-             'coming_soon_msg'.tr,
-             textAlign: TextAlign.center,
+            'coming_soon_msg'.tr,
+            textAlign: TextAlign.center,
           ),
           actions: [
             Center(

@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
-import '../controllers/auth_controller.dart';
+
 
 class ProfileController extends GetxController {
 
   final _supabase = Supabase.instance.client;
-  bool isLogin =false ;
+  final isLogin = false.obs;
   
   final firstName = ''.obs;
   final lastName = ''.obs;
@@ -37,7 +37,7 @@ class ProfileController extends GetxController {
       gender.value = '';
       avatarUrl.value = '';
       addresses.clear();
-      isLogin = false;
+      isLogin.value = false;
     } catch (e) {
       print('Error signing out: $e');
     }
@@ -50,48 +50,41 @@ class ProfileController extends GetxController {
       final supabaseUser = _supabase.auth.currentUser;
       print('Current user: ${supabaseUser?.id}');
 
-      if(supabaseUser!=null){isLogin=true;}
+      if(supabaseUser!=null){isLogin.value=true;}
     //  final firebaseUser = _authController.firebaseAuth.currentUser;
 
-      if (supabaseUser != null ) {
+      if (supabaseUser != null) {
         // Prepare the query based on which auth system is being used
         final query = _supabase.from('users').select();
         
-        Map<String, dynamic>? response;
-        if (supabaseUser != null) {
-          // If Supabase user exists, query by ID
-          print('Querying user with ID: ${supabaseUser.id}');
-          response = await query
-              .eq('id', supabaseUser.id)
-              .single();
-          print('User response: $response');
-        } 
+        // If Supabase user exists, query by ID
+        print('Querying user with ID: ${supabaseUser.id}');
+        final response = await query
+            .eq('id', supabaseUser.id)
+            .single();
+        print('User response: $response');
 
-        if (response != null) {
-          print('Setting user data...');
-          firstName.value = response['first_name'] ?? '';
-          lastName.value = response['last_name'] ?? '';
-          email.value = response['email'] ?? '';
-          phoneNumber.value = response['phone_number'] ?? '';
-          birthDate.value = _formatDate(response['birth_date'] ?? '');
-          gender.value = response['gender'] ?? '';
-          avatarUrl.value = response['avatar_url'] ?? '';
-          
-          print('User data set: ${firstName.value} ${lastName.value}');
+        print('Setting user data...');
+        firstName.value = response['first_name'] ?? '';
+        lastName.value = response['last_name'] ?? '';
+        email.value = response['email'] ?? '';
+        phoneNumber.value = response['phone_number'] ?? '';
+        birthDate.value = _formatDate(response['birth_date'] ?? '');
+        gender.value = response['gender'] ?? '';
+        avatarUrl.value = response['avatar_url'] ?? '';
+        
+        print('User data set: ${firstName.value} ${lastName.value}');
 
-          // Fetch user addresses using the Supabase record ID
-          print('Fetching addresses...');
-          final addressesResponse = await _supabase
-              .from('addresses')
-              .select()
-                .eq('user_id', response['id'])
-              .order('created_at', ascending: false);
-              
-          addresses.value = List<Map<String, dynamic>>.from(addressesResponse);
-          print('Addresses fetched: ${addresses.length}');
-        } else {
-          print('No user data found in database');
-        }
+        // Fetch user addresses using the Supabase record ID
+        print('Fetching addresses...');
+        final addressesResponse = await _supabase
+            .from('addresses')
+            .select()
+              .eq('user_id', response['id'])
+            .order('created_at', ascending: false);
+            
+        addresses.value = List<Map<String, dynamic>>.from(addressesResponse);
+        print('Addresses fetched: ${addresses.length}');
       } else {
         print('No authenticated user found');
       }
